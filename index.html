@@ -638,8 +638,8 @@
 
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7932.842460422377!2d106.88680762255194!3d-6.208039266073488!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f4a251fade63%3A0xc15c936763b2198e!2sCipinang%2C%20Kec.%20Pulo%20Gadung%2C%20Kota%20Jakarta%20Timur%2C%20Daerah%20Khusus%20Ibukota%20Jakarta!5e0!3m2!1sid!2sid!4v1619630501018!5m2!1sid!2sid"
-                  width="600"
-                  height="450"
+                  width="380"
+                  height="380"
                   style="border: 0"
                   allowfullscreen=""
                   loading="lazy"
@@ -648,32 +648,31 @@
             </div>
 
             <div class="col-lg-7 mt-5 mt-lg-0 d-flex align-items-stretch">
-              <form action="forms/contact.php" method="post" role="form" class="php-email-form">
-                <div class="row">
-                  <div class="form-group col-md-6">
-                    <label for="name">Your Name</label>
-                    <input type="text" name="name" class="form-control" id="name" required />
+              <div class="col-md-6">
+                <div class="alert alert-danger alert-dismissible fade show d-none my-alert" role="alert">
+                  <strong>Terima Kasih</strong> Pesan Anda Sudah Kami Terima.
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <form name="submit-to-google-sheet">
+                  <div class="mb-8">
+                    <label for="Name" class="form-label">Nama Lengkap</label>
+                    <input type="text" class="form-control" id="name" aria-describedby="name" name="nama" />
                   </div>
-                  <div class="form-group col-md-6">
-                    <label for="name">Your Email</label>
-                    <input type="email" class="form-control" name="email" id="email" required />
+                  <div class="mb-8">
+                    <label for="Email1" class="form-label">Alamat Email</label>
+                    <input type="email" class="form-control" id="email" aria-describedby="Email" name="email" />
                   </div>
-                </div>
-                <div class="form-group">
-                  <label for="name">Subject</label>
-                  <input type="text" class="form-control" name="subject" id="subject" required />
-                </div>
-                <div class="form-group">
-                  <label for="name">Message</label>
-                  <textarea class="form-control" name="message" rows="10" required></textarea>
-                </div>
-                <div class="my-3">
-                  <div class="loading">Loading</div>
-                  <div class="error-message"></div>
-                  <div class="sent-message">Your message has been sent. Thank you!</div>
-                </div>
-                <div class="text-center"><button type="submit">Send Message</button></div>
-              </form>
+                  <div class="mb-8">
+                    <label for="Message" class="form-label">Tuliskan Pesan Anda</label>
+                    <textarea class="form-control" id="Message" rows="3" name="pesan"></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary btn-kirim">Kirim</button>
+                  <button class="btn btn-primary btn-loading d-none" type="button" disabled>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Loading...
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </div>
@@ -714,5 +713,36 @@
 
     <!-- Template Main JS File -->
     <script src="assets/js/main.js"></script>
+
+    <script>
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbwpoyWfDjV5V4ju9tJ_xgB97ICIE_QbRWUjMH7Y4Q-PinmSwucd8X87szqBdQ_m5YG1/exec'
+      const form = document.forms['submit-to-google-sheet']
+      const btnkirim = document.querySelector('.btn-kirim')
+      const btnLoading = document.querySelector('.btn-loading')
+      const myalert = document.querySelector ('.my-alert')
+    
+
+      form.addEventListener('submit', e => {
+        e.preventDefault()
+        //ketika tombol submit diklik
+        //tampilkan tombol loading, hilangkan tombol kirim
+        btnLoading.classList.toggle('d-none')
+        btnkirim.classList.toggle('d-none')
+
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+          .then(response => {
+            //tampilkan tombol kirim, hilangkan tombol loading
+            btnLoading.classList.toggle('d-none')
+            btnkirim.classList.toggle('d-none')
+            //tampilkan alert
+            myalert.classList.toggle('d-none')
+            //reset formnya
+            form.reset();
+            console.log('Success!', response)
+          })
+          .catch(error => console.error('Error!', error.message))
+      })
+    </script>
+  </body>
   </body>
 </html>
